@@ -1,0 +1,54 @@
+# Password Policy Language Grammar
+
+program         : policy_list
+
+policy_list     : policy
+                | policy_list policy
+
+policy          : POLICY IDENTIFIER LBRACE rule_list RBRACE
+
+rule_list       : rule
+                | rule_list rule
+
+rule            : min_length_rule
+                | max_length_rule
+                | require_rule
+                | blacklist_rule
+                | forbid_rule
+
+min_length_rule : MIN_LENGTH NUMBER
+max_length_rule : MAX_LENGTH NUMBER
+require_rule    : REQUIRE char_class NUMBER
+blacklist_rule  : BLACKLIST STRING
+forbid_rule     : FORBID forbid_type
+
+char_class      : UPPERCASE
+                | LOWERCASE
+                | DIGITS
+                | SPECIAL
+
+forbid_type     : USERNAME
+                | REPETITION
+                | SEQUENTIAL
+
+# Tokens
+POLICY          : 'POLICY'
+MIN_LENGTH      : 'MIN_LENGTH'
+MAX_LENGTH      : 'MAX_LENGTH'
+REQUIRE         : 'REQUIRE'
+BLACKLIST       : 'BLACKLIST'
+FORBID          : 'FORBID'
+UPPERCASE       : 'UPPERCASE'
+LOWERCASE       : 'LOWERCASE'
+DIGITS          : 'DIGITS'
+SPECIAL         : 'SPECIAL'
+USERNAME        : 'USERNAME'
+REPETITION      : 'REPETITION'
+SEQUENTIAL      : 'SEQUENTIAL'
+LBRACE          : '{'
+RBRACE          : '}'
+IDENTIFIER      : [a-zA-Z_][a-zA-Z0-9_]*
+NUMBER          : [0-9]+
+STRING          : '"' .* '"'
+COMMENT         : '#' .* '\n'
+WHITESPACE      : [ \t\n\r]+

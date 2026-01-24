@@ -1,0 +1,4 @@
+POLICY WeakPassword {
+    MIN_LENGTH 4
+    REQUIRE LOWERCASE 1
+}
