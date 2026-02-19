@@ -1,4 +1,5 @@
 # Enterprise-grade password policy
+
 POLICY EnterprisePassword {
     MIN_LENGTH 16
     MAX_LENGTH 128

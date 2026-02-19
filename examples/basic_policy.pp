@@ -1,5 +1,4 @@
 # Basic Password Policy
-# This is a comment
 
 POLICY UserPasswordPolicy {
     MIN_LENGTH 8

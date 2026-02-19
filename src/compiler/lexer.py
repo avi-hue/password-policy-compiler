@@ -4,7 +4,7 @@ Tokenizes input source code using PLY
 """
 
 import ply.lex as lex
-from tokens import tokens, reserved
+from .tokens import tokens, reserved
 
 
 class Lexer:

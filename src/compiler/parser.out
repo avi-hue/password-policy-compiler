@@ -1,0 +1,419 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> policy_list
+Rule 2     program -> empty
+Rule 3     policy_list -> policy
+Rule 4     policy_list -> policy_list policy
+Rule 5     policy -> POLICY IDENTIFIER LBRACE rule_list RBRACE
+Rule 6     rule_list -> rule
+Rule 7     rule_list -> rule_list rule
+Rule 8     rule_list -> empty
+Rule 9     rule -> MIN_LENGTH NUMBER
+Rule 10    rule -> MAX_LENGTH NUMBER
+Rule 11    rule -> REQUIRE char_class NUMBER
+Rule 12    rule -> BLACKLIST STRING
+Rule 13    rule -> FORBID forbid_type
+Rule 14    char_class -> UPPERCASE
+Rule 15    char_class -> LOWERCASE
+Rule 16    char_class -> DIGITS
+Rule 17    char_class -> SPECIAL
+Rule 18    forbid_type -> USERNAME
+Rule 19    forbid_type -> REPETITION
+Rule 20    forbid_type -> SEQUENTIAL
+Rule 21    empty -> <empty>
+
+Terminals, with rules where they appear
+
+BLACKLIST            : 12
+DIGITS               : 16
+FORBID               : 13
+IDENTIFIER           : 5
+LBRACE               : 5
+LOWERCASE            : 15
+MAX_LENGTH           : 10
+MIN_LENGTH           : 9
+NUMBER               : 9 10 11
+POLICY               : 5
+RBRACE               : 5
+REPETITION           : 19
+REQUIRE              : 11
+SEQUENTIAL           : 20
+SPECIAL              : 17
+STRING               : 12
+UPPERCASE            : 14
+USERNAME             : 18
+error                : 
+
+Nonterminals, with rules where they appear
+
+char_class           : 11
+empty                : 2 8
+forbid_type          : 13
+policy               : 3 4
+policy_list          : 1 4
+program              : 0
+rule                 : 6 7
+rule_list            : 5 7
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . policy_list
+    (2) program -> . empty
+    (3) policy_list -> . policy
+    (4) policy_list -> . policy_list policy
+    (21) empty -> .
+    (5) policy -> . POLICY IDENTIFIER LBRACE rule_list RBRACE
+
+    $end            reduce using rule 21 (empty -> .)
+    POLICY          shift and go to state 5
+
+    program                        shift and go to state 1
+    policy_list                    shift and go to state 2
+    empty                          shift and go to state 3
+    policy                         shift and go to state 4
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> policy_list .
+    (4) policy_list -> policy_list . policy
+    (5) policy -> . POLICY IDENTIFIER LBRACE rule_list RBRACE
+
+    $end            reduce using rule 1 (program -> policy_list .)
+    POLICY          shift and go to state 5
+
+    policy                         shift and go to state 6
+
+state 3
+
+    (2) program -> empty .
+
+    $end            reduce using rule 2 (program -> empty .)
+
+
+state 4
+
+    (3) policy_list -> policy .
+
+    POLICY          reduce using rule 3 (policy_list -> policy .)
+    $end            reduce using rule 3 (policy_list -> policy .)
+
+
+state 5
+
+    (5) policy -> POLICY . IDENTIFIER LBRACE rule_list RBRACE
+
+    IDENTIFIER      shift and go to state 7
+
+
+state 6
+
+    (4) policy_list -> policy_list policy .
+
+    POLICY          reduce using rule 4 (policy_list -> policy_list policy .)
+    $end            reduce using rule 4 (policy_list -> policy_list policy .)
+
+
+state 7
+
+    (5) policy -> POLICY IDENTIFIER . LBRACE rule_list RBRACE
+
+    LBRACE          shift and go to state 8
+
+
+state 8
+
+    (5) policy -> POLICY IDENTIFIER LBRACE . rule_list RBRACE
+    (6) rule_list -> . rule
+    (7) rule_list -> . rule_list rule
+    (8) rule_list -> . empty
+    (9) rule -> . MIN_LENGTH NUMBER
+    (10) rule -> . MAX_LENGTH NUMBER
+    (11) rule -> . REQUIRE char_class NUMBER
+    (12) rule -> . BLACKLIST STRING
+    (13) rule -> . FORBID forbid_type
+    (21) empty -> .
+
+  ! shift/reduce conflict for MIN_LENGTH resolved as shift
+  ! shift/reduce conflict for MAX_LENGTH resolved as shift
+  ! shift/reduce conflict for REQUIRE resolved as shift
+  ! shift/reduce conflict for BLACKLIST resolved as shift
+  ! shift/reduce conflict for FORBID resolved as shift
+    MIN_LENGTH      shift and go to state 12
+    MAX_LENGTH      shift and go to state 13
+    REQUIRE         shift and go to state 14
+    BLACKLIST       shift and go to state 15
+    FORBID          shift and go to state 16
+    RBRACE          reduce using rule 21 (empty -> .)
+
+  ! MIN_LENGTH      [ reduce using rule 21 (empty -> .) ]
+  ! MAX_LENGTH      [ reduce using rule 21 (empty -> .) ]
+  ! REQUIRE         [ reduce using rule 21 (empty -> .) ]
+  ! BLACKLIST       [ reduce using rule 21 (empty -> .) ]
+  ! FORBID          [ reduce using rule 21 (empty -> .) ]
+
+    rule_list                      shift and go to state 9
+    rule                           shift and go to state 10
+    empty                          shift and go to state 11
+
+state 9
+
+    (5) policy -> POLICY IDENTIFIER LBRACE rule_list . RBRACE
+    (7) rule_list -> rule_list . rule
+    (9) rule -> . MIN_LENGTH NUMBER
+    (10) rule -> . MAX_LENGTH NUMBER
+    (11) rule -> . REQUIRE char_class NUMBER
+    (12) rule -> . BLACKLIST STRING
+    (13) rule -> . FORBID forbid_type
+
+    RBRACE          shift and go to state 17
+    MIN_LENGTH      shift and go to state 12
+    MAX_LENGTH      shift and go to state 13
+    REQUIRE         shift and go to state 14
+    BLACKLIST       shift and go to state 15
+    FORBID          shift and go to state 16
+
+    rule                           shift and go to state 18
+
+state 10
+
+    (6) rule_list -> rule .
+
+    RBRACE          reduce using rule 6 (rule_list -> rule .)
+    MIN_LENGTH      reduce using rule 6 (rule_list -> rule .)
+    MAX_LENGTH      reduce using rule 6 (rule_list -> rule .)
+    REQUIRE         reduce using rule 6 (rule_list -> rule .)
+    BLACKLIST       reduce using rule 6 (rule_list -> rule .)
+    FORBID          reduce using rule 6 (rule_list -> rule .)
+
+
+state 11
+
+    (8) rule_list -> empty .
+
+    RBRACE          reduce using rule 8 (rule_list -> empty .)
+    MIN_LENGTH      reduce using rule 8 (rule_list -> empty .)
+    MAX_LENGTH      reduce using rule 8 (rule_list -> empty .)
+    REQUIRE         reduce using rule 8 (rule_list -> empty .)
+    BLACKLIST       reduce using rule 8 (rule_list -> empty .)
+    FORBID          reduce using rule 8 (rule_list -> empty .)
+
+
+state 12
+
+    (9) rule -> MIN_LENGTH . NUMBER
+
+    NUMBER          shift and go to state 19
+
+
+state 13
+
+    (10) rule -> MAX_LENGTH . NUMBER
+
+    NUMBER          shift and go to state 20
+
+
+state 14
+
+    (11) rule -> REQUIRE . char_class NUMBER
+    (14) char_class -> . UPPERCASE
+    (15) char_class -> . LOWERCASE
+    (16) char_class -> . DIGITS
+    (17) char_class -> . SPECIAL
+
+    UPPERCASE       shift and go to state 22
+    LOWERCASE       shift and go to state 23
+    DIGITS          shift and go to state 24
+    SPECIAL         shift and go to state 25
+
+    char_class                     shift and go to state 21
+
+state 15
+
+    (12) rule -> BLACKLIST . STRING
+
+    STRING          shift and go to state 26
+
+
+state 16
+
+    (13) rule -> FORBID . forbid_type
+    (18) forbid_type -> . USERNAME
+    (19) forbid_type -> . REPETITION
+    (20) forbid_type -> . SEQUENTIAL
+
+    USERNAME        shift and go to state 28
+    REPETITION      shift and go to state 29
+    SEQUENTIAL      shift and go to state 30
+
+    forbid_type                    shift and go to state 27
+
+state 17
+
+    (5) policy -> POLICY IDENTIFIER LBRACE rule_list RBRACE .
+
+    POLICY          reduce using rule 5 (policy -> POLICY IDENTIFIER LBRACE rule_list RBRACE .)
+    $end            reduce using rule 5 (policy -> POLICY IDENTIFIER LBRACE rule_list RBRACE .)
+
+
+state 18
+
+    (7) rule_list -> rule_list rule .
+
+    RBRACE          reduce using rule 7 (rule_list -> rule_list rule .)
+    MIN_LENGTH      reduce using rule 7 (rule_list -> rule_list rule .)
+    MAX_LENGTH      reduce using rule 7 (rule_list -> rule_list rule .)
+    REQUIRE         reduce using rule 7 (rule_list -> rule_list rule .)
+    BLACKLIST       reduce using rule 7 (rule_list -> rule_list rule .)
+    FORBID          reduce using rule 7 (rule_list -> rule_list rule .)
+
+
+state 19
+
+    (9) rule -> MIN_LENGTH NUMBER .
+
+    RBRACE          reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+    MIN_LENGTH      reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+    MAX_LENGTH      reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+    REQUIRE         reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+    BLACKLIST       reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+    FORBID          reduce using rule 9 (rule -> MIN_LENGTH NUMBER .)
+
+
+state 20
+
+    (10) rule -> MAX_LENGTH NUMBER .
+
+    RBRACE          reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+    MIN_LENGTH      reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+    MAX_LENGTH      reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+    REQUIRE         reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+    BLACKLIST       reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+    FORBID          reduce using rule 10 (rule -> MAX_LENGTH NUMBER .)
+
+
+state 21
+
+    (11) rule -> REQUIRE char_class . NUMBER
+
+    NUMBER          shift and go to state 31
+
+
+state 22
+
+    (14) char_class -> UPPERCASE .
+
+    NUMBER          reduce using rule 14 (char_class -> UPPERCASE .)
+
+
+state 23
+
+    (15) char_class -> LOWERCASE .
+
+    NUMBER          reduce using rule 15 (char_class -> LOWERCASE .)
+
+
+state 24
+
+    (16) char_class -> DIGITS .
+
+    NUMBER          reduce using rule 16 (char_class -> DIGITS .)
+
+
+state 25
+
+    (17) char_class -> SPECIAL .
+
+    NUMBER          reduce using rule 17 (char_class -> SPECIAL .)
+
+
+state 26
+
+    (12) rule -> BLACKLIST STRING .
+
+    RBRACE          reduce using rule 12 (rule -> BLACKLIST STRING .)
+    MIN_LENGTH      reduce using rule 12 (rule -> BLACKLIST STRING .)
+    MAX_LENGTH      reduce using rule 12 (rule -> BLACKLIST STRING .)
+    REQUIRE         reduce using rule 12 (rule -> BLACKLIST STRING .)
+    BLACKLIST       reduce using rule 12 (rule -> BLACKLIST STRING .)
+    FORBID          reduce using rule 12 (rule -> BLACKLIST STRING .)
+
+
+state 27
+
+    (13) rule -> FORBID forbid_type .
+
+    RBRACE          reduce using rule 13 (rule -> FORBID forbid_type .)
+    MIN_LENGTH      reduce using rule 13 (rule -> FORBID forbid_type .)
+    MAX_LENGTH      reduce using rule 13 (rule -> FORBID forbid_type .)
+    REQUIRE         reduce using rule 13 (rule -> FORBID forbid_type .)
+    BLACKLIST       reduce using rule 13 (rule -> FORBID forbid_type .)
+    FORBID          reduce using rule 13 (rule -> FORBID forbid_type .)
+
+
+state 28
+
+    (18) forbid_type -> USERNAME .
+
+    RBRACE          reduce using rule 18 (forbid_type -> USERNAME .)
+    MIN_LENGTH      reduce using rule 18 (forbid_type -> USERNAME .)
+    MAX_LENGTH      reduce using rule 18 (forbid_type -> USERNAME .)
+    REQUIRE         reduce using rule 18 (forbid_type -> USERNAME .)
+    BLACKLIST       reduce using rule 18 (forbid_type -> USERNAME .)
+    FORBID          reduce using rule 18 (forbid_type -> USERNAME .)
+
+
+state 29
+
+    (19) forbid_type -> REPETITION .
+
+    RBRACE          reduce using rule 19 (forbid_type -> REPETITION .)
+    MIN_LENGTH      reduce using rule 19 (forbid_type -> REPETITION .)
+    MAX_LENGTH      reduce using rule 19 (forbid_type -> REPETITION .)
+    REQUIRE         reduce using rule 19 (forbid_type -> REPETITION .)
+    BLACKLIST       reduce using rule 19 (forbid_type -> REPETITION .)
+    FORBID          reduce using rule 19 (forbid_type -> REPETITION .)
+
+
+state 30
+
+    (20) forbid_type -> SEQUENTIAL .
+
+    RBRACE          reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+    MIN_LENGTH      reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+    MAX_LENGTH      reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+    REQUIRE         reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+    BLACKLIST       reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+    FORBID          reduce using rule 20 (forbid_type -> SEQUENTIAL .)
+
+
+state 31
+
+    (11) rule -> REQUIRE char_class NUMBER .
+
+    RBRACE          reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+    MIN_LENGTH      reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+    MAX_LENGTH      reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+    REQUIRE         reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+    BLACKLIST       reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+    FORBID          reduce using rule 11 (rule -> REQUIRE char_class NUMBER .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for MIN_LENGTH in state 8 resolved as shift
+WARNING: shift/reduce conflict for MAX_LENGTH in state 8 resolved as shift
+WARNING: shift/reduce conflict for REQUIRE in state 8 resolved as shift
+WARNING: shift/reduce conflict for BLACKLIST in state 8 resolved as shift
+WARNING: shift/reduce conflict for FORBID in state 8 resolved as shift

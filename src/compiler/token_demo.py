@@ -3,7 +3,7 @@ Token Recognition Demo
 Demonstrates how tokens are identified from source code
 """
 
-from tokens import tokens, reserved, Token
+from .tokens import tokens, reserved, Token
 
 
 def demonstrate_tokens():
