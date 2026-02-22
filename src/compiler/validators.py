@@ -145,7 +145,7 @@ class PolicyTest:
         
         passed = 0
         for result in self.test_results:
-            status = "✓ PASS" if result['passed'] else "✗ FAIL"
+            status = "PASS" if result['passed'] else "FAIL"
             pwd = result['password'][:18] + ".." if len(result['password']) > 20 else result['password']
             msg = result['message'][:23] + ".." if len(result['message']) > 25 else result['message']
             

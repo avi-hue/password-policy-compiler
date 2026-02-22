@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from compiler.lexer import Lexer
 from compiler.parser import Parser
+from compiler.semantic_analyzer import SemanticAnalyzer
 from compiler.generator import CodeGenerator
 
 
@@ -41,6 +42,7 @@ Examples:
   ppc policy.pp -o validator.py    # Specify output file
   ppc policy.pp --tokens           # Show token output
   ppc policy.pp --ast              # Show parsed AST
+  ppc policy.pp --semantic         # Perform semantic analysis
   ppc policy.pp --generate         # Generate Python validator code
   ppc --version                    # Show version
         '''
@@ -78,6 +80,12 @@ Examples:
     )
     
     parser.add_argument(
+        '--semantic',
+        action='store_true',
+        help='Display semantic analysis results'
+    )
+    
+    parser.add_argument(
         '--generate',
         action='store_true',
         help='Generate Python validator code'
@@ -86,7 +94,7 @@ Examples:
     parser.add_argument(
         '--version',
         action='version',
-        version='Password Policy Compiler v0.4.0 (Weeks 1-4 complete)'
+        version='Password Policy Compiler v0.5.0 (Weeks 1-7 complete)'
     )
     
     args = parser.parse_args()
@@ -111,27 +119,27 @@ Examples:
         tokens = lexer.tokenize(policy_content)
     
     if lexer.errors:
-        print(f"\n❌ Lexical Errors: {len(lexer.errors)}")
+        print(f"\n[ERROR] Lexical Errors: {len(lexer.errors)}")
         for error in lexer.errors:
             print(f"  {error}")
         return 1
     
-    if not (args.ast or args.generate):
-        print(f"✓ Lexical analysis complete: {len(tokens)} tokens found")
-        print("✓ No lexical errors found.")
+    if not (args.ast or args.semantic or args.generate):
+        print(f"[OK] Lexical analysis complete: {len(tokens)} tokens found")
+        print("[OK] No lexical errors found.")
         return 0
     
     # STEP 2: Parsing
     if args.verbose:
         print("\nParsing policy...")
     
-    parser = Parser()
-    parser.build()
-    ast = parser.parse(policy_content, lexer.lexer)
+    parser_obj = Parser()
+    parser_obj.build()
+    ast = parser_obj.parse(policy_content, lexer.lexer)
     
-    if parser.errors:
-        print(f"\n❌ Parsing Errors: {len(parser.errors)}")
-        for error in parser.errors:
+    if parser_obj.errors:
+        print(f"\n[ERROR] Parsing Errors: {len(parser_obj.errors)}")
+        for error in parser_obj.errors:
             print(f"  {error}")
         return 1
     
@@ -147,13 +155,37 @@ Examples:
                     print(f"     {j+1}. {rule}")
         print("=" * 80)
     
-    if not args.generate:
-        print(f"\n✓ Parsing complete: {len(ast.policies)} policy/policies parsed")
-        if not parser.errors:
-            print("✓ No parsing errors found.")
-        return 0
+    # STEP 2.5: Semantic Analysis
+    if args.semantic or args.verbose:
+        print("\nPerforming semantic analysis...")
     
-    # STEP 3: Code Generation
+    semantic_analyzer = SemanticAnalyzer()
+    is_valid, semantic_errors = semantic_analyzer.analyze(ast)
+    
+    if args.semantic or args.verbose:
+        semantic_analyzer.print_report()
+    
+    if semantic_errors:
+        print(f"\n[ERROR] Semantic Errors: {len(semantic_errors)}")
+        for error in semantic_errors:
+            print(f"  {error}")
+    
+    if semantic_analyzer.warnings:
+        print(f"\n[WARNING] Semantic Warnings: {len(semantic_analyzer.warnings)}")
+        for warning in semantic_analyzer.warnings:
+            print(f"  • {warning}")
+    
+    if not args.generate:
+        print(f"\n[OK] Analysis complete: {len(ast.policies)} policy/policies parsed")
+        if not parser_obj.errors:
+            print("[OK] No parsing errors found.")
+        return 0 if is_valid else 1
+    
+    # STEP 3: Code Generation (only if semantic analysis passed or verbose)
+    if semantic_errors and not args.verbose:
+        print("\n[ERROR] Semantic errors must be fixed before code generation.")
+        return 1
+    
     if args.verbose:
         print("\nGenerating Python validator code...")
     
@@ -161,7 +193,7 @@ Examples:
     generated_code = generator.generate(ast)
     
     if generator.errors:
-        print(f"\n❌ Generation Errors: {len(generator.errors)}")
+        print(f"\n[ERROR] Generation Errors: {len(generator.errors)}")
         for error in generator.errors:
             print(f"  {error}")
         return 1
@@ -178,9 +210,9 @@ Examples:
         try:
             with open(args.output, 'w') as f:
                 f.write(generated_code)
-            print(f"\n✓ Generated code saved to: {args.output}")
+            print(f"\n[OK] Generated code saved to: {args.output}")
         except Exception as e:
-            print(f"\n❌ Error writing to file: {e}")
+            print(f"\n[ERROR] Error writing to file: {e}")
             return 1
     else:
         # Auto-generate output filename
@@ -191,12 +223,12 @@ Examples:
         try:
             with open(output_path, 'w') as f:
                 f.write(generated_code)
-            print(f"\n✓ Generated code saved to: {output_path}")
+            print(f"\n[OK] Generated code saved to: {output_path}")
         except Exception as e:
-            print(f"\n❌ Error writing to file: {e}")
+            print(f"\n[ERROR] Error writing to file: {e}")
             return 1
     
-    print("\n✓ Compilation complete!")
+    print("\n[OK] Compilation complete!")
     return 0
 
 
