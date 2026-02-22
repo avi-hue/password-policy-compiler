@@ -89,7 +89,7 @@ class CodeGenerator:
             elif isinstance(rule, RequireRule):
                 pattern = self._get_char_class_pattern(rule.char_class)
                 self._emit(f'# Require {rule.count} {rule.char_class.lower()} character(s)', 2)
-                self._emit(f'count = len(re.findall(r"{pattern}", password))', 2)
+                self._emit(f'''count = len(re.findall(r"""{pattern}""", password))''', 2)
                 self._emit(f'if count < {rule.count}:', 2)
                 self._emit(f'return False, "Password must contain at least {rule.count} {rule.char_class.lower()} character(s)"', 3)
             
@@ -142,9 +142,9 @@ class CodeGenerator:
         self._emit('def main():')
         self._emit('"""Test validators"""', 1)
         self._emit('test_passwords = [', 1)
-        self._emit('"Password123!"  # Should be valid', 2)
-        self._emit('"pwd"           # Should be invalid (too short)', 2)
-        self._emit('"abcabc"        # Should be invalid (no uppercase/digits)', 2)
+        self._emit('"Password123!",  # Should be valid', 2)
+        self._emit('"pwd",           # Should be invalid (too short)', 2)
+        self._emit('"abcabc",        # Should be invalid (no uppercase/digits)', 2)
         self._emit(']', 1)
         self._emit()
         self._emit('# Testing would go here', 1)
@@ -164,7 +164,7 @@ class CodeGenerator:
             CharClass.UPPERCASE: '[A-Z]',
             CharClass.LOWERCASE: '[a-z]',
             CharClass.DIGITS: '[0-9]',
-            CharClass.SPECIAL: '[!@#$%^&*()_+\\-=\\[\\]{};:\'",.<>?/\\\\|`~]'
+            CharClass.SPECIAL: '[!@#$%^&*()_+\\-=\\[\\]{};:"\',.<>?/\\\\|`~]'
         }
         return patterns.get(char_class, '')
 
