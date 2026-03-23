@@ -97,12 +97,17 @@ password-policy-compiler/
 
 ## Project Status
 
+The core compiler pipeline has been implemented through **Week 9**.  Weeks 10–14 remain on the roadmap for extended features.
+
 - ✅ **Week 1**: Project Setup & Basic CLI
-- ✅ **Week 2**: DSL Grammar & Tokens
+- ✅ **Week 2**: DSL Grammar & Token Definitions
 - ✅ **Week 3**: Lexer Implementation (Tokenization)
 - ✅ **Week 4**: Parser Implementation (AST Building)
-- ✅ **Week 5**: Code Generation (Validator Creation)
-- ✅ **Week 6**: Testing & Validation (Runtime Testing)
+- ✅ **Week 5**: AST Construction & Code Generation
+- ✅ **Week 6**: Syntax Error Handling
+- ✅ **Week 7**: Basic Semantic Analysis
+- ✅ **Week 8**: Code Generation (output files, IR documentation)
+- ✅ **Week 9**: Advanced Semantic Checks (entropy estimation, strength warnings)
 
 ## Example
 

@@ -319,6 +319,9 @@ class SemanticAnalyzer:
             self.warnings.append(
                 f"Policy '{policy.name}' has no MIN_LENGTH rule"
             )
+        
+        # Week 9: Entropy estimation and strength warnings
+        self._check_policy_strength(policy, rule_tracker)
     
     def _check_policy_names(self, policies: List[Policy]) -> None:
         """Check for duplicate policy names"""
@@ -333,6 +336,73 @@ class SemanticAnalyzer:
                 ))
             else:
                 names[policy.name] = policy
+    
+    def _check_policy_strength(self, policy: Policy, rule_tracker: Dict) -> None:
+        """Check policy strength using entropy estimation and emit warnings"""
+        entropy = self._calculate_entropy(rule_tracker)
+        strength = self._classify_strength(entropy)
+        
+        # Warn if entropy is below recommended threshold (40 bits)
+        if entropy < 40:
+            self.warnings.append(
+                f"Policy '{policy.name}' has low entropy ({entropy:.1f} bits, {strength}). "
+                "Consider increasing length or complexity requirements."
+            )
+        
+        # Additional strength warnings
+        min_len = rule_tracker['min_length'] or 8
+        total_require = sum(req.count for req in rule_tracker['require_rules'])
+        
+        if min_len < 12 and total_require < 3:
+            self.warnings.append(
+                f"Policy '{policy.name}' may be vulnerable: Short length ({min_len}) "
+                f"with insufficient character requirements ({total_require} total)."
+            )
+    
+    def _calculate_entropy(self, rule_tracker: Dict) -> float:
+        """Calculate password entropy in bits"""
+        import math
+        
+        min_len = rule_tracker['min_length'] or 8  # Default assumption
+        charset_size = self._estimate_charset_size(rule_tracker)
+        
+        if charset_size == 0:
+            return 0.0
+        
+        # Basic entropy formula: log2(charset_size ^ length)
+        return min_len * math.log2(charset_size)
+    
+    def _estimate_charset_size(self, rule_tracker: Dict) -> int:
+        """Estimate the effective character set size from rules"""
+        charset_size = 0
+        
+        # Base character sets
+        char_sets = {
+            CharClass.LOWERCASE: 26,
+            CharClass.UPPERCASE: 26,
+            CharClass.DIGITS: 10,
+            CharClass.SPECIAL: 32  # Approximation
+        }
+        
+        # Add sizes for required character classes
+        for req in rule_tracker['require_rules']:
+            if req.char_class in char_sets:
+                charset_size += char_sets[req.char_class]
+        
+        # If no requirements, assume basic set
+        if charset_size == 0:
+            charset_size = 26 + 26 + 10  # lowercase + uppercase + digits
+        
+        return charset_size
+    
+    def _classify_strength(self, entropy: float) -> str:
+        """Classify policy strength based on entropy"""
+        if entropy < 30:
+            return "Weak"
+        elif entropy < 40:
+            return "Medium"
+        else:
+            return "Strong"
     
     def _check_global_consistency(self) -> None:
         """Check global consistency across all policies"""

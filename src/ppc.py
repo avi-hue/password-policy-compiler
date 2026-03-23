@@ -94,7 +94,7 @@ Examples:
     parser.add_argument(
         '--version',
         action='version',
-        version='Password Policy Compiler v0.5.0 (Weeks 1-7 complete)'
+        version='Password Policy Compiler v0.7.0 (Weeks 1-9 complete)'
     )
     
     args = parser.parse_args()
