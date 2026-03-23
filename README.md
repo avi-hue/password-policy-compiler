@@ -97,7 +97,7 @@ password-policy-compiler/
 
 ## Project Status
 
-The core compiler pipeline has been implemented through **Week 9**.  Weeks 10–14 remain on the roadmap for extended features.
+The core compiler pipeline has been implemented through **Week 10**.  Weeks 11–14 remain on the roadmap for extended features.
 
 - ✅ **Week 1**: Project Setup & Basic CLI
 - ✅ **Week 2**: DSL Grammar & Token Definitions
@@ -108,6 +108,7 @@ The core compiler pipeline has been implemented through **Week 9**.  Weeks 10�
 - ✅ **Week 7**: Basic Semantic Analysis
 - ✅ **Week 8**: Code Generation (output files, IR documentation)
 - ✅ **Week 9**: Advanced Semantic Checks (entropy estimation, strength warnings)
+- ✅ **Week 10**: Password Entropy & Strength Analysis (runtime entropy calculation)
 
 ## Example
 
@@ -139,7 +140,11 @@ python src/ppc.py examples/strong_policy.pp --generate -o output/enterprise_vali
 class EnterprisepasswordValidator:
     """Password validator for EnterprisePassword policy"""
     
-    def validate(self, password: str) -> Tuple[bool, str]:
+    def validate(self, password: str, include_strength: bool = False) -> Tuple:
+        """
+        Validate a password against this policy
+        Returns: (is_valid, error_message) or (is_valid, error_message, strength, entropy) if include_strength=True
+        """
         # Minimum length: 16
         if len(password) < 16:
             return False, "Password must be at least 16 characters"
@@ -155,20 +160,28 @@ class EnterprisepasswordValidator:
         
         # ... more validation checks ...
         
+        if include_strength:
+            strength = self.classify_strength(password)
+            entropy = self.calculate_entropy(password)
+            return True, "Password is valid", strength, entropy
         return True, "Password is valid"
     
-    def _has_repetition(self, password: str) -> bool:
-        """Check for character repetition"""
-        for i in range(len(password) - 2):
-            if password[i] == password[i+1] == password[i+2]:
-                return True
-        return False
+    def calculate_entropy(self, password: str) -> float:
+        """Calculate password entropy in bits"""
+        charset_size = self._estimate_charset_size(password)
+        if charset_size == 0:
+            return 0.0
+        return len(password) * math.log2(charset_size)
     
-    def _has_sequential(self, password: str) -> bool:
-        """Check for sequential characters"""
-        for i in range(len(password) - 2):
-            # implementation...
-        return False
+    def classify_strength(self, password: str) -> str:
+        """Classify password strength based on entropy"""
+        entropy = self.calculate_entropy(password)
+        if entropy < 30:
+            return "Weak"
+        elif entropy < 40:
+            return "Medium"
+        else:
+            return "Strong"
 ```
 
 ## Testing

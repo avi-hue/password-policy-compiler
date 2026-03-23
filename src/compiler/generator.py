@@ -46,6 +46,7 @@ class CodeGenerator:
         self._emit('"""')
         self._emit()
         self._emit('import re')
+        self._emit('import math')
         self._emit('from typing import Tuple')
         self._emit()
     
@@ -69,10 +70,10 @@ class CodeGenerator:
         self._emit()
         
         # Generate validate method
-        self._emit('def validate(self, password: str) -> Tuple[bool, str]:', 1)
+        self._emit('def validate(self, password: str, include_strength: bool = False) -> Tuple:', 1)
         self._emit('"""', 2)
         self._emit('Validate a password against this policy', 2)
-        self._emit('Returns: (is_valid, error_message)', 2)
+        self._emit('Returns: (is_valid, error_message) or (is_valid, error_message, strength, entropy) if include_strength=True', 2)
         self._emit('"""', 2)
         
         for rule in policy.rules:            
@@ -110,6 +111,10 @@ class CodeGenerator:
                 self._emit('# Would check against blacklist file at runtime', 2)
         
         self._emit()
+        self._emit('if include_strength:', 2)
+        self._emit('strength = self.classify_strength(password)', 3)
+        self._emit('entropy = self.calculate_entropy(password)', 3)
+        self._emit('return True, "Password is valid", strength, entropy', 3)
         self._emit('return True, "Password is valid"', 2)
         
         # Generate helper methods
@@ -135,6 +140,41 @@ class CodeGenerator:
         self._emit('if ord_vals[1] == ord_vals[0] - 1 and ord_vals[2] == ord_vals[1] - 1:', 3)
         self._emit('return True', 4)
         self._emit('return False', 2)
+        
+        # Week 10: Password entropy and strength analysis
+        self._emit()
+        self._emit('def calculate_entropy(self, password: str) -> float:', 1)
+        self._emit('"""Calculate password entropy in bits"""', 2)
+        self._emit('charset_size = self._estimate_charset_size(password)', 2)
+        self._emit('if charset_size == 0:', 2)
+        self._emit('return 0.0', 3)
+        self._emit('return len(password) * math.log2(charset_size)', 2)
+        
+        self._emit()
+        self._emit('def _estimate_charset_size(self, password: str) -> int:', 1)
+        self._emit('"""Estimate character set size based on password content"""', 2)
+        self._emit('charset = set()', 2)
+        self._emit('for char in password:', 2)
+        self._emit('if char.isupper():', 3)
+        self._emit('charset.add("upper")', 4)
+        self._emit('elif char.islower():', 3)
+        self._emit('charset.add("lower")', 4)
+        self._emit('elif char.isdigit():', 3)
+        self._emit('charset.add("digit")', 4)
+        self._emit('else:', 3)
+        self._emit('charset.add("special")', 4)
+        self._emit('return len(charset) * 26 if len(charset) > 0 else 0', 2)
+        
+        self._emit()
+        self._emit('def classify_strength(self, password: str) -> str:', 1)
+        self._emit('"""Classify password strength based on entropy"""', 2)
+        self._emit('entropy = self.calculate_entropy(password)', 2)
+        self._emit('if entropy < 30:', 2)
+        self._emit('return "Weak"', 3)
+        self._emit('elif entropy < 40:', 2)
+        self._emit('return "Medium"', 3)
+        self._emit('else:', 2)
+        self._emit('return "Strong"', 3)
     
     def _emit_main(self):
         """Emit main function for testing"""
