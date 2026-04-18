@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Policy Compiler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="currentColor"/>
+                    <path d="M14.59 8.59L13.17 7.17L9.58 10.76C8.84 10.45 7.96 10.63 7.41 11.23C6.72 11.97 6.8 13.19 7.52 13.91C8.24 14.63 9.46 14.71 10.2 14.02C10.8 13.47 10.98 12.59 10.67 11.85L14.59 7.93C14.77 7.75 14.77 7.46 14.59 7.28C14.41 7.1 14.12 7.1 13.94 7.28L9.94 11.28C9.53 11.45 9.17 11.75 8.94 12.12C8.71 12.49 8.63 12.91 8.71 13.33C8.79 13.75 9.03 14.12 9.38 14.38C9.73 14.64 10.15 14.75 10.58 14.7C11.01 14.65 11.41 14.44 11.68 14.1C12.3 13.43 12.21 12.36 11.49 11.69L15.3 7.88C15.5 7.69 15.5 7.37 15.3 7.18" fill="currentColor"/>
+                </svg>
+                <h1>Password Policy <span>Compiler</span></h1>
+            </div>
+            <p class="subtitle">Design & Validate Domain-Specific Password Policies</p>
+        </header>
+
+        <main class="grid">
+            <!-- Left Side: Policy Editor -->
+            <section class="card policy-section">
+                <div class="card-header">
+                    <h2>Policy Definition</h2>
+                    <span class="badge" id="compileStatus">Not Compiled</span>
+                </div>
+                <div class="card-body">
+                    <p class="hint">Define your rule set using the custom DSL.</p>
+                    <textarea id="policyDsl" spellcheck="false" placeholder="Enter policy here...">POLICY EnterprisePassword {
+    MIN_LENGTH 12
+    MAX_LENGTH 128
+    
+    REQUIRE UPPERCASE 1
+    REQUIRE LOWERCASE 1
+    REQUIRE DIGITS 1
+    REQUIRE SPECIAL 1
+    
+    FORBID USERNAME
+    FORBID REPETITION
+    FORBID SEQUENTIAL
+}</textarea>
+                    
+                    <div class="action-row">
+                        <button id="compileBtn" class="primary-btn">
+                            <span class="btn-text">Compile Policy</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </div>
+
+                    <div id="compilerFeedback" class="feedback-box hidden">
+                        <!-- Errors or success injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Validation Area -->
+            <section class="card validate-section">
+                <div class="card-header">
+                    <h2>Live Validation</h2>
+                    <span class="badge badge-accent hidden" id="activePolicyBadge">No Policy</span>
+                </div>
+                
+                <!-- Displayed until policy is compiled -->
+                <div id="validationOverlay" class="overlay">
+                    <p>Compile a policy to start testing.</p>
+                </div>
+
+                <div class="card-body">
+                    <div class="input-group">
+                        <label for="passwordInput">Test Password</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="passwordInput" placeholder="Type a password..." disabled autocomplete="off">
+                            <div class="validation-icon" id="validationIcon"></div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Feedback Array -->
+                    <div class="metrics-grid hidden" id="metricsGrid">
+                        <div class="metric-card">
+                            <span class="metric-label">Strength</span>
+                            <strong class="metric-value" id="strengthValue">--</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Entropy</span>
+                            <strong class="metric-value" id="entropyValue">-- <small>bits</small></strong>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress / Strength bar -->
+                    <div class="strength-meter hidden" id="strengthMeter">
+                        <div class="bar" id="strengthBar"></div>
+                    </div>
+
+                    <!-- Detailed Output -->
+                    <div class="results-container hidden" id="resultsContainer">
+                        <h3 id="resultStatus">Waiting...</h3>
+                        <ul class="rule-list" id="ruleViolations">
+                            <!-- Rule violations injected dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

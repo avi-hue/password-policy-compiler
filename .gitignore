@@ -25,3 +25,7 @@ output/
 # OS
 .DS_Store
 Thumbs.db
+
+# code-review-graph
+.code-review-graph/
+
